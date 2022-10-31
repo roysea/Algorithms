@@ -106,34 +106,40 @@ void ExpandNeighbors(const vector<int> &current, int goal[2], vector<vector<int>
 
 
 //Implementation of A* search algorithm
-vector<vector<State>> Search(vector<vector<State>> grid,
-                            int init[2], int goal[2]) {
+vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2]) {
+  // Create the vector of open nodes.
+  vector<vector<int>> open {};
 
-// Create the vector of open nodes.
-vector<vector<int>> open {};
+  // Initialize the starting node.
+  int x = init[0];
+  int y = init[1];
+  int g = 0;
+  int h = Heuristic(x, y, goal[0],goal[1]);
+  AddToOpen(x, y, g, h, open, grid);
 
-// Initialize the starting node.
-int x = init[0];
-int y = init[1];
-int g = 0;
-int h = Heuristic(x, y, goal[0],goal[1]);
-AddToOpen(x, y, g, h, open, grid);
+  while (open.size() > 0) {
+    // Get the next node
+    CellSort(&open);
+    auto current = open.back();
+    open.pop_back();
+    x = current[0];
+    y = current[1];
+    grid[x][y] = State::kPath;
 
-while(!open.empty()){
-  // TODO: Sort the open list using `CellSort`, and get the current node.
-  CellSort(&open);
-  auto node = open.back();
-  open.pop_back();
-  int x1 = node[0];
-  int y1 = node[1];
-  grid[x1][y1] = State::kPath;
-  if(x1 == goal[0] && y1 == goal[1]) return grid;
-  // else ExpandNeighbors();
-}
+    // Check if we're done.
+    if (x == goal[0] && y == goal[1]) {
+      grid[init[0]][init[1]] = State::kStart;
+      grid[goal[0]][goal[1]] = State::kFinish;
+      return grid;
+    }
 
-// We've run out of new nodes to explore and haven't found a path.
-cout << "No path found!" << "\n";
-return std::vector<vector<State>>{};
+    // If we're not done, expand search to current node's neighbors.
+    ExpandNeighbors(current, goal, open, grid);
+  }
+
+  // We've run out of new nodes to explore and haven't found a path.
+  cout << "No path found!" << "\n";
+  return std::vector<vector<State>>{};
 }
 
 #include "test.cpp"
