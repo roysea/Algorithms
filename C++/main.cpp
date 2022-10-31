@@ -24,7 +24,7 @@ using std::istringstream;
 using std::string;
 using std::vector;
 using std::abs;
-uging std::sort;
+using std::sort;
 
 /**
  * Compare the F values of two cells. f = h+ g
@@ -64,35 +64,42 @@ vector<vector<State>> Search(vector<vector<State>> grid,
                             int init[2], int goal[2]) {
 
 // Create the vector of open nodes.
-  vector<vector<int>> open {};
+vector<vector<int>> open {};
 
-  // Initialize the starting node.
-  int x = init[0];
-  int y = init[1];
-  int g = 0;
-  int h = Heuristic(x, y, goal[0],goal[1]);
-  AddToOpen(x, y, g, h, open, grid);
+// Initialize the starting node.
+int x = init[0];
+int y = init[1];
+int g = 0;
+int h = Heuristic(x, y, goal[0],goal[1]);
+AddToOpen(x, y, g, h, open, grid);
 
-  while(open != empty()){
-    // TODO: Sort the open list using `CellSort`, and get the current node.
-    cellSort(open);
-    vector<int> node = open.back();
-    int x1 = node[0];
-    int y1 = node[1];
-    grid[x1][y1] = kPath
-    if(x1 == goal[0] && y1 == goal[1]) return grid;
-    // else ExpandNeighbors();
-  }
- cout << "No path found!" << "\n";
- return std::vector<vector<State>>{};
+while(!open.empty()){
+  // TODO: Sort the open list using `CellSort`, and get the current node.
+  CellSort(&open);
+  auto node = open.back();
+  open.pop_back();
+  int x1 = node[0];
+  int y1 = node[1];
+  grid[x1][y1] = State::kPath;
+  if(x1 == goal[0] && y1 == goal[1]) return grid;
+  // else ExpandNeighbors();
 }
 
+// We've run out of new nodes to explore and haven't found a path.
+cout << "No path found!" << "\n";
+return std::vector<vector<State>>{};
+}
 
+#include "test.cpp"
 int main() {
   int init[2]{0, 0};
   int goal[2]{4, 5};
   auto board = ReadBoardFile("1.board");
   auto solution = Search(board, init, goal);
-  PrintBoard(board);
   PrintBoard(solution);
+  // Tests
+  TestHeuristic();
+  TestAddToOpen();
+  TestCompare();
+  TestSearch();
 }
