@@ -9,7 +9,7 @@ using std::istringstream;
 using std::string;
 using std::vector;
 
-enum class State {kEmpty, kObstacle, kClosed};
+enum class State {kEmpty, kObstacle, kClosed, kPath};
 
 // read every string line, parse digits, and
 // push back states

@@ -16,6 +16,7 @@ To Complete This Exercise:
 #include <sstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "maze.cpp"
 using std::cout;
 using std::ifstream;
@@ -23,7 +24,26 @@ using std::istringstream;
 using std::string;
 using std::vector;
 using std::abs;
+uging std::sort;
 
+/**
+ * Compare the F values of two cells. f = h+ g
+ */
+// bool Compare(const vector<int> a, const vector<int> b) {
+//   int f1 = a[2] + a[3]; // f1 = g1 + h1
+//   int f2 = b[2] + b[3]; // f2 = g2 + h2
+//   return f1 > f2;
+// }
+bool Compare(vector<int> a, vector<int> b){
+  return (a[3] + a[4] > b[3] + b[4]);
+}
+
+/**
+ * Sort the two-dimensional vector of ints in descending order.
+ */
+void CellSort(vector<vector<int>> *v) {
+  sort(v->begin(), v->end(), Compare);
+}
 
 // TODO: Write the Heuristic function here.
 int Heuristic(int x1, int y1, int x2, int y2){
@@ -42,12 +62,30 @@ void AddToOpen(int x, int y, int g, int h,
 //Implementation of A* search algorithm
 vector<vector<State>> Search(vector<vector<State>> grid,
                             int init[2], int goal[2]) {
-  cout << "No path found!" << "\n";
-  return std::vector<vector<State>> {};
+
+// Create the vector of open nodes.
+  vector<vector<int>> open {};
+
+  // Initialize the starting node.
+  int x = init[0];
+  int y = init[1];
+  int g = 0;
+  int h = Heuristic(x, y, goal[0],goal[1]);
+  AddToOpen(x, y, g, h, open, grid);
+
+  while(open != empty()){
+    // TODO: Sort the open list using `CellSort`, and get the current node.
+    cellSort(open);
+    vector<int> node = open.back();
+    int x1 = node[0];
+    int y1 = node[1];
+    grid[x1][y1] = kPath
+    if(x1 == goal[0] && y1 == goal[1]) return grid;
+    // else ExpandNeighbors();
+  }
+ cout << "No path found!" << "\n";
+ return std::vector<vector<State>>{};
 }
-
-
-
 
 
 int main() {
