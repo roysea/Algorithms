@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Introduction to the A* Algorithm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preload" as="image" href="https://www.redblobgames.com/img/transparent-blob.png">
+    <link rel="canonical" href="https://www.redblobgames.com/pathfinding/a-star/introduction.html">
+    <link rel="alternate" type="application/atom+xml" title="Blobs in Games - Atom" href="https://simblob.blogspot.com/feeds/posts/default">
+    <meta name="twitter:creator" content="@redblobgames">
+    <meta name="theme-color" content="hsl(0,50%,45%)">
+    <meta name="verify-v1" content="82b+h1+tgwLrcTqTiJrqquMvoFVBwMwY11dx63m01zk=">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@redblobgames">
+    <meta property="og:title" content="Red Blob Games: Introduction to A*">
+    <meta property="og:description" content="Interactive tutorial for A*, Dijkstra's Algorithm, and other pathfinding algorithms">
+    <meta property="og:image" content="https://www.redblobgames.com/thumbnail/astar-intro.jpg">
+    <script defer="defer" src="Introduction%20to%20the%20A%20Algorithm_files/_introduction.js"></script>
+    <meta name="citation_title" content="Introduction to the A* Algorithm">
+    <meta name="citation_author" content="Patel, Amit">
+    <meta name="citation_publication_date" content="2014">
+    <style>
+        :root{--hue: 0;--bgurl: url("/img/transparent-blob.png")}/*! CSS Copyright 2007-2020 by amitp@cs.stanford.edu (Amit J. Patel)  *//*! I don't mind if you copy my stylesheet.  However, I'd appreciate it if you gave me credit. */body{--serif: "Iowan Old Style",Cambria,Georgia,serif;--sans-serif: "Avenir Next",Candara,Ubuntu,"Fira Sans",system-ui,"Segoe UI",sans-serif;--monospace: "Roboto Mono","Cascadia Mono",Consolas,monospace,"Segoe UI Symbol",Symbol;--body-width: calc(100vw - 2.25rem);--font-size: calc(0.625rem + 1vw);--line-height: calc(1.5 * var(--font-size));font-family:var(--sans-serif);font-size:var(--font-size);line-height:1.5em;min-height:95%}@media (min-width: 34.375em){body{--body-width: min(20.6rem + 33vw, 41.25rem);--font-size: calc(var(--body-width) / 33)}}main{font-family:var(--serif)}h1,h2,h3,h4,h5,h6,figcaption,.sans-serif{font-family:var(--sans-serif)}tt,code,kbd,samp,pre{font-family:var(--monospace);font-size:0.8em}#table-of-contents{background-color:#fff;padding-left:1em;width:18em;float:right}#table-of-contents:after{clear:right}nav,#table-of-contents{font-family:var(--sans-serif);font-size:calc(var(--font-size) / 1.25)}@media screen{header,section>h2{text-shadow:0px 2px 5px rgba(0,0,0,0.8);text-rendering:optimizeLegibility}}h1{font-size:2.0em;margin:0;line-height:calc(1.5 * var(--line-height))}h1 .subheading{font-size:0.5em;line-height:var(--line-height)}sup,sub{position:relative;vertical-align:baseline;font-size:0.75em;line-height:0;padding-left:0.125em}sup{top:-0.5em}sub{bottom:-0.25em}details summary{cursor:pointer}*{box-sizing:border-box}html,body{margin:0;padding:0}html{background-color:#e4e4e0;color:#000}body{background-color:#fff;color:#333}header{display:block;text-align:center}header>h1{padding-top:var(--line-height)}@media screen{.colored-background,header,footer,.divider,section>h2{color:#fff;background-color:hsl(var(--hue), 50%, 45%);background-image:var(--bgurl), var(--bgurl);background-position:0 0, 16px 16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.colored-background a,header a,footer a,.divider a,section>h2 a{color:hsl(var(--hue), 40%, 90%)}}footer a,.divider a{text-decoration:underline}main{margin-left:0;margin-right:0;padding-left:0;padding-right:0}section{margin:var(--line-height) 0}section>*,.comments{width:var(--body-width);max-width:100%}@media screen{.comments,.below-divider{background-color:#e4e4e0}}.comments{padding-bottom:1.25rem;font-size:1.0rem}.comments .comment-author{text-shadow:1px 1px 3px #fff}section>h2{--h2-margin: 3em;--h2-padding: 0.5em;margin:var(--line-height) auto;padding:calc(var(--line-height) / 2 - 1px) 0;font-size:1.25em;width:calc(2 * var(--h2-margin) + var(--body-width));max-width:100%}section>h2>span{display:inline-block;margin-left:var(--h2-margin)}section>h2 a.anchor{float:right;width:var(--h2-margin);padding-right:var(--h2-padding);text-align:center;color:hsl(var(--hue), 50%, 45%)}section>h2:hover a.anchor{color:hsl(var(--hue), 20%, 80%)}h3{--h2-margin: 3em;margin:var(--line-height) auto;font-size:1.125em}h3 a.anchor{float:right;width:var(--h2-margin);padding-right:0.5em;text-align:center;color:hsl(var(--hue), 20%, 80%)}@media (min-width: 34.375em){h3 a.anchor{margin-right:calc(0em - var(--h2-margin))}}h4 a.anchor,h5 a.anchor,h6 a.anchor{padding-left:1em;color:hsl(var(--hue), 20%, 80%)}h3:hover,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{color:hsl(var(--hue), 50%, 40%)}header nav{display:block}header nav ul{display:flex;flex-flow:row wrap;justify-content:center;line-height:1.0;margin:0}header nav ul li{display:inline-block;padding:0.1em 0.3em;text-align:center;flex:0 0 4em;align-self:center;white-space:nowrap}header nav ul li a{display:block;font-weight:bold;text-decoration:none}header nav ul li:hover{background-color:rgba(0,0,0,0.5);font-weight:bold}header,.divider,section>h2{border-bottom:1px solid #000}.divider,section>h2{border-top:1px solid #000}.divider{min-height:calc(2 * var(--line-height));text-align:center}.below-divider{padding-top:var(--line-height);border-bottom:1px solid black}.below-divider>p:first-child{font-size:1.25em;text-align:center;margin-top:0}footer{--footer-padding-y: calc(var(--line-height) / 2);--footer-padding-x: var(--font-size);padding:var(--footer-padding-y) var(--footer-padding-x);border-top:1px solid #000}footer>div>address{display:block}footer>div>*{text-align:center}@media (min-width: 50em){footer>div{margin:0 auto;display:flex;flex-flow:row wrap;justify-content:center;max-width:calc(2 * var(--body-width));width:calc(100vw - 2 * var(--footer-padding-x))}footer>div>address{flex:0 1 20em;align-self:center;text-align:left}footer>div>div{flex:1 1 20em;align-self:center;text-align:right}footer>div>div>p,footer>div>div>div{margin-top:0}}h2:target{animation:target-attention 0.4s 1;font-size:2.0em}@keyframes target-attention{0%{transform:scale(1.1)}100%{transform:scale(1.1)}}div:target{border:1px dashed #888}kbd kbd{padding:0.1em 0.4em;margin:0 0.1em 0.2em 0.1em;font-size:0.75em;white-space:nowrap;background-color:#ddd;color:#242;border:1px solid rgba(0,0,0,0.2);border-radius:0.2em;box-shadow:inset 0 0 1px 1px #fff,0 2px 0 rgba(0,0,0,0.3)}samp,kbd{background-color:#f3f3f2}code,samp{color:#442}kbd{margin:0 0.4em;color:#252}section li::marker{font-family:var(--sans-serif);color:hsl(var(--hue), 50%, 40%)}img{max-width:100%;height:auto;-ms-interpolation-mode:bicubic}section figcaption{font-size:0.75em;line-height:1.1;text-align:center}a{color:hsl(var(--hue), 50%, 45%);text-decoration:none}a:hover{text-decoration:underline}:focus{outline-color:hsl(var(--hue), 50%, 45%)}.draft{font-family:var(--serif);font-size:calc(4 * var(--font-size));letter-spacing:-0.1em;color:#eee;opacity:0.5;text-align:center;transform:rotate(-5deg);line-height:1.0;position:absolute;top:0;height:0;left:25%;width:50%;pointer-events:none}@media (min-width: 34.375em){section p,section li{hanging-punctuation:first last}p,nav,figure,td,th,abbr,acronym,code,kbd,samp,tt,var,pre{hyphens:auto;-webkit-hyphens:auto}}.w-auto,section>.w-auto{width:auto}.w-full,section>.w-full{width:100%}.select-none{user-select:none;-webkit-user-select:none}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-sm{font-size:0.875em}.font-sans{font-family:var(--sans-serif)}.font-serif{font-family:var(--serif)}.font-mono{font-family:var(--monospace)}p,figure,ul,ol{margin:var(--line-height) 0}header>*,section>*,footer>*,main>address,.comments{margin-left:auto;margin-right:auto}figure{text-align:center}figure pre{text-align:left}li>ul,li>ol{margin-top:0;margin-bottom:0}figure img,figure svg,figure canvas{max-width:100%}dt{font-weight:bold}pre{width:var(--body-width);max-width:100%;line-height:1.4;overflow:auto;border-top:1px solid #ccc;border-bottom:1px solid #ccc;border-left-width:0;border-right-width:0}pre::-webkit-scrollbar{height:1em}pre::-webkit-scrollbar-thumb:horizontal{border-radius:0.5em;background:rgba(0,0,0,0.4)}pre.simple,.comments pre{overflow:auto;width:calc(var(--body-width) * 1.2);border:none;background:transparent;background-color:transparent;box-shadow:none}pre.snippet,pre.src{border-top-style:dashed;border-bottom-style:dashed}section>pre:only-child{padding-bottom:var(--font-size);border-bottom:1px solid rgba(0,0,0,0.5)}blockquote{font-style:italic}table.standard{font-family:var(--sans-serif);font-size:0.875em;border:2px solid white;border-collapse:collapse;overflow-x:auto}table.standard th{background-color:#e8e8e3;border:2px solid white;padding:0 0.5em}table.standard td{background-color:#fff;border:1px solid #f3f3f2;border-right-color:#babaab;padding:0 0.5em}table.standard thead{border-bottom:2px solid #babaab}table.standard thead th{background:linear-gradient(to top, #e8e8e3, #f4f4f1, #fafaf9)}aside,p.note,div.note>p{width:calc(--body-width - 2em);padding:1em;background:#eee;border:1px solid #ddd;box-shadow:0 8px 6px -6px rgba(0,0,0,0.4)}tt,code{padding:0 2px}main>address,section>address,section>time{display:block;width:var(--body-width);max-width:100%;font-family:var(--sans-serif);text-align:right}form{margin:0}input{accent-color:hsl(var(--hue), 50%, 50%)}input[type="text"]{max-width:100%;border:1px solid rgba(0,0,0,0.7);background-color:#f8f8f4;color:#000;text-align:center;font-weight:bold}input[type="text"]:focus{background-color:#fffff4}input::-webkit-input-placeholder{color:#aaa}input::-moz-placeholder{color:#aaa}input[type="search"][name="q"]{box-shadow:inset 0 0.1em 0.3em 0 rgba(0,0,0,0.5);border-radius:0.6em;padding:0.3em 0.6em;border-width:0}.TODO{color:#bf4040;background:#e8e3e3;border:1px solid #bf4040;margin-left:0.5ex}.DONE{color:#4040bf;background:#e3e3e8;border:1px solid #4040bf}.src .constant{font-style:oblique}.src .comment-delimiter,.src .nxml-comment-delimiter{color:#4488ff}.src .comment,.src .nxml-comment-content{color:#006699}.src .builtin{color:#508b20}.src .warning{color:#cc0000}.src .function-name{color:#268bd2;font-weight:bold}.src .variable-name{font-weight:bold;color:#5c3d5c}.src .type{color:#6c71c4}.src .constant-face{color:#d33682}.src .doc{color:#666666;background-color:#e2e6e8}.src .string{color:#888888}.src .preprocessor{color:#859900}.src .negation-char,.src .sh-escaped-newline{color:#ff0000}.src .todo{color:#ffffff;background:#dc322f}.src .note{color:#ffffff;background:#2aa198}.src .hack{color:#ffffff;background:#859900}.src .paren{color:#a0a090;font-weight:bold}.src .keyword{color:#679;font-weight:bold}.src .minor-control-construct{color:#406abf;font-weight:bold}.src .major-control-construct{color:#bf4040}.src-cpp .constant{color:#999999}.src-emacs-lisp .paren{color:#c9c9c4}.src-sh .string,.src-sh .comment{color:inherit}.src-python .highlight-indentation{border-right:2px solid #eeeeee}.src-css .css-selector{color:#478547}.src-css .css-property{color:#406abf}.src-xml .nxml-element-prefix{color:#bf40bf}.src-xml .nxml-element-local-name{color:#406abf;font-weight:normal}.src-xml .nxml-attribute-local-name{color:#478547}.src-xml .nxml-element-colon{color:#a3adc2}.src-xml .nxml-tag-delimiter,.src-xml .nxml-tag-slash{color:#9cabc9;font-weight:bold}table.standard td.left,table.standard th.left{text-align:left}table.standard td.center,table.standard th.center{text-align:center}table.standard td.right,table.standard th.right{text-align:right}@media screen{*[class^="section-number"]{color:hsl(var(--hue), 20%, 50%)}h2 .section-number{display:inline-block;margin-left:0;padding-left:0.5em;text-align:center;width:var(--h2-margin);color:hsl(var(--hue), 50%, 80%)}h2 .section-number+span{margin-left:0}h3 .section-number{float:left;text-align:center;width:2em;margin-right:0.5em;color:hsl(var(--hue), 25%, 90%);background:hsl(var(--hue), 50%, 50%);border-radius:0.25em;text-shadow:0px 2px 5px rgba(0,0,0,0.8)}}@media screen and (min-width: 34.375em){h3 .section-number{background:url(/img/svg-blob-mini.svg) no-repeat center center;background-size:2em 2em;height:2em;margin-left:-2.5em;margin-top:-0.3em;padding-top:0.3em}}.print-endnote{display:none}@media print{@page{margin:1in}body{--font-size: 13pt;--body-width: 100vw;--serif: "Book Antiqua", "Times New Roman", serif;--sans-serif: "Helvetica", sans-serif;--monospace: "Courier", "Courier New", monospace}h2,h3{page-break-after:avoid}figure{page-break-inside:avoid}p,li{orphans:5;widows:5}section p a,section li a{text-decoration:underline}header nav,.comments{display:none}.print-endnote{display:unset}.print-endnote li{list-style-type:none;word-break:break-all}.print-endnote img{width:2.5em;vertical-align:bottom}}
+
+        @media print{header::before{position:absolute;right:0;top:0;content:url(https://chart.apis.google.com/chart?chs=120x120&cht=qr&chl=https%3A%2F%2Fwww.redblobgames.com%2Fpathfinding%2Fa-star%2Fintroduction.html);}}
+
+              svg.icon { width: 1em; height: 1em; overflow: visible; }
+
+              figure img, figure canvas { width: auto; height: auto; }
+              .side-by-side { display: flex; justify-content: center; }
+              .side-by-side > figure { flex: 0 1 16rem; flex-basis: calc(var(--body-width)/2); margin: 0; }
+              .side-by-side > figure > canvas { padding: 0 0.7rem; }
+              section > .width-150percent { max-width: 100vw; width: calc(1.5 * var(--body-width)); }
+
+              @media (any-hover: hover), (-moz-touch-enabled: 0) { .no-hover { display: none; } }
+
+              button.hover {
+                  font-weight: bold;
+                  font-size: inherit;
+                  font-family: inherit;
+                  border: 1px outset hsl(0, 24%, 95%);
+                  border-radius: 0.25em;
+                  background: hsl(0, 24%, 95%);
+                  color: #000;
+                  margin: 0.25em;
+                  padding: 0.125em;
+                  -webkit-appearance:none;
+                  cursor: pointer;
+              }
+              button.hover:hover {
+                  border-color: hsl(0, 48%, 46%);
+                  background: hsl(0, 48%, 46%);
+                  color: #fff;
+                  box-shadow: 1px 1px 3px hsla(0, 0%, 0%, 0.5);
+              }
+              .slider button { font-size: large; }
+              input[type=range] { width: 95%; }
+
+              /* special case: don't want animation here */
+              #diagram-expansion .play_pause { display: none; }
+
+              /* used for hide/show layers */
+              #diagram-graphs2-waypoints { visibility: hidden; }
+              #diagram-graphs2-waypoints.show { visibility: visible; }
+              #diagram-graphs2-grid { visibility: hidden; background-color: white; }
+              #diagram-graphs2-grid.show { visibility: visible; }
+
+              /* for inline legend */
+              .square        { box-sizing: content-box; display: inline-block; width: 1.2em; height: 1.2em; vertical-align: middle; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5); }
+              .frontier-bg   { border: 3px solid hsl(220, 50%, 50%); background: hsl(30, 20%, 75%); color: white; }
+              .unexplored-bg { background: hsl(0, 10%, 85%);   color: black; }
+              .reached-bg    { background: hsl(30, 20%, 75%);  color: black; }
+              .current-bg    { border: 3px solid hsl(220, 50%, 50%); background: hsl(220, 60%, 60%); color: white; }
+              .neighbors-bg  { border: 3px dotted hsl(150, 40%, 40%); background: radial-gradient(circle, hsla(150, 50%, 45%, 0.0) 0%, hsla(150, 50%, 45%, 0.5) 100%); color: white; box-shadow: unset; }
+              .neighbors-bg.reached-bg { background: radial-gradient(circle, hsla(30, 20%, 75%) 0%, hsla(150, 50%, 45%, 0.5) 100%); }
+              .next-bg       { border: 3px dotted hsl(150, 40%, 40%); background: hsl(150, 50%, 50%); color: white; }
+
+              /* the changes from one code sample to the next are marked with em */
+              pre em { font-weight: inherit; font-style: inherit; background-color: #ffc; padding: 0.125em 0; }
+
+              /* for code samples and also mentions of these words in the text of the page */
+              .frontier { color: hsl(220, 50%, 50%); }
+              .current { color: hsl(220, 60%, 60%); }
+              .start { color: hsl(0, 50%, 50%); }
+              .reached, .came_from { color: hsl(30, 40%, 40%); }
+              .neighbors { color: hsl(150, 40%, 30%); }
+              .next { color: hsl(150, 50%, 40%); }
+              .goal { color: hsl(310, 50%, 50%); }
+              .path { color: hsl(280, 50%, 50%); }
+              .cost_so_far, .new_cost { color: hsl(340, 30%, 40%); }
+              .def, .return, .while, .if, .for, .break,
+              .frontier, .start, .current, .reached, .came_from, .neighbors, .next, .goal, .path, .cost_so_far, .new_cost { font-weight: bold; }
+    </style>
+    <script>
+        function $l(s,e,d){d=document;if(d.location.hostname!='localhost'){e=d.createElement('script');e.async=true;e.src=s;e.dataset.timestamp=+new Date();d.body.appendChild(e)}}
+    </script>
+    <link rel="prefetch" as="style" href="Introduction%20to%20the%20A%20Algorithm_files/a_data_002/lounge.4da01105e3422b4671a57e6d013c64c2.css">
+    <link rel="prefetch" as="script" href="Introduction%20to%20the%20A%20Algorithm_files/a_data_002/common.bundle.c817aead0064c1fa134fcaa6055ca127.js">
+    <link rel="prefetch" as="script" href="Introduction%20to%20the%20A%20Algorithm_files/a_data_002/lounge.bundle.034fc7e30c05b68d12ba25d7be2be8ef.js">
+    <link rel="prefetch" as="script" href="Introduction%20to%20the%20A%20Algorithm_files/a_data_002/config.js">
+</head>
+
+<body class="gameprog">
+    <header>
+        <h1>Introduction to the A* Algorithm</h1>
+        <div class="subheading">
+            &nbsp; from <a href="https://www.redblobgames.com/">Red Blob Games</a></div>
+        <nav>
+            <form action="https://www.google.com/search">
+                <ul>
+                    <li><a href="https://www.redblobgames.com/">Home</a></li>
+                    <li><a href="https://simblob.blogspot.com/">Blog</a></li>
+                    <li><a href="https://pinboard.in/u:amitp/t:gamedev/">Links</a></li>
+                    <li><a href="https://twitter.com/redblobgames">Twitter</a></li>
+                    <li><a rel="me" href="http://www-cs-students.stanford.edu/~amitp/">About</a></li>
+                    <li>&nbsp;</li>
+                    <li>
+                        <input type="search" name="q" placeholder="Search" size="8">
+                    </li>
+                </ul>
+                <input type="hidden" name="hq" value="site:www.redblobgames.com OR site:theory.stanford.edu/~amitp/ OR site:www-cs-students.stanford.edu/~amitp/ OR site:amitp.blogspot.com OR site:simblob.blogspot.com">
+            </form>
+        </nav>
+    </header>
+    <main><address>Created 26 May 2014, updated Aug 2014, Feb 2016, Jun 2016, Jun 2020</address>
+        <section>
+            <p>In games we often want to find paths from one location to another. We’re not only trying to find the shortest distance; we also want to take into account travel time. Move the blob
+                <svg class="icon" alt="(blob icon)" viewBox="-1050 -1200 2100 2100"
+                xml:base="../_icon-blob.svg">
+                    <use xlink:href="#blob-icon"></use>
+                </svg> (start point) and cross
+                <svg class="icon" alt="(X icon)" viewBox="-10 -10 20 20" xml:base="../_icon-cross.svg">
+                    <path d="M -9,-9 L 9,9 M -9,9 L 9,-9" stroke="hsl(310, 50%, 50%)" stroke-width="6.75"></path>
+                </svg> (end point) to see the shortest path.</p>
+            <figure id="diagram-intro" class="intro-diagram">
+                <canvas style="touch-action: none;" width="990" height="502"></canvas>
+            </figure>
+            <p>To find this path we can use a <em>graph search</em> algorithm, which works when the map is represented as a graph. <strong>A*</strong> is a popular choice for graph search. <strong>Breadth First Search</strong> is the simplest of the graph
+                search algorithms, so let’s start there, and we’ll work our way up to A*.</p>
+        </section>
+        <section>
+            <h2 id="graphs"><span><a href="#graphs">Representing the map</a></span><a class="anchor" href="#graphs">#</a></h2>
+            <p>The first thing to do when studying an algorithm is to understand the <strong>data</strong>. What is the input? What is the output?</p>
+            <p><strong>Input:</strong> Graph search algorithms, including A*, take a “graph” as input. A graph is a set of <em>locations</em>
+                <svg class="nodes" fill="hsl(220, 50%, 60%)" width="1em" height="1em" viewBox="0 0 10 10">
+                    <circle cx="5" cy="5" r="4"></circle>
+                </svg> (“nodes”) and the <em>connections</em>
+                <svg class="edges" width="2em" height="1em" viewBox="0 0 30 20">
+                    <path class="edge" stroke="hsl(160, 30%, 50%)" stroke-width="4.5" d="M 0,10 l 30,0"></path>
+                </svg> (“edges”) between them. Here’s the graph I gave to A*:</p>
+            <figure id="diagram-graphs1" style="position:relative;text-align:left"><img alt="Different map with the same pathfinding graph" src="Introduction%20to%20the%20A%20Algorithm_files/same-graph-different-map.jpg" style="position:absolute;padding:4px;width:100%;z-index:1">
+                <div class="alternate-show" style="position:absolute;left:0;right:0;bottom:0;text-align:center;font-family:var(--sans-serif);font-size:0.5em;line-height:0.95;color:#333;z-index:2;text-shadow:0 0 3px #fff">Sprites by StarRaven - see footer for link</div>
+                <div id="diagram-graphs1-under" class="intro-diagram alternate-hide" style="position:absolute;width:100%;z-index:3"></div>
+                <div id="diagram-graphs1-over" class="intro-diagram" style="position:relative;width:100%;z-index:4">
+                    <canvas style="touch-action: none;" width="990" height="502"></canvas>
+                </div>
+            </figure>
+            <p>A* doesn’t see anything else. It only sees the graph. It doesn’t know whether something is indoors or outdoors, or if it’s a room or a doorway, or how big an area is. <em>It only sees the graph!</em> It doesn’t know the difference between
+                this map and
+                <button class="hover" id="show-graphs1-different-map">this other one</button>.</p>
+            <p><strong>Output:</strong> The path found by A* is
+                <button class="hover" id="show-graphs1-path-trace">made of graph nodes and edges</button>. The edges are abstract mathematical concepts. A* will tell you to move from one location to another <em>but it won’t tell you how</em>. Remember that it doesn’t know anything about rooms or doors;
+                all it sees is the graph. You’ll have to decide whether a graph edge returned by A* means moving from tile to tile or walking in a straight line or opening a door or swimming or running along a curved path.</p>
+            <p><strong>Tradeoffs:</strong> For any given game map, there are many different ways of making a pathfinding graph to give to A*. The above map makes most doorways into nodes; what if we made
+                <button class="hover" id="show-graphs2-waypoints">doorways into edges</button>? What if we used
+                <button class="hover" id="show-graphs2-grid">a pathfinding grid</button>?</p>
+            <figure style="position:relative">
+                <div id="diagram-graphs2-navmesh" class="intro-diagram" style="position:relative;width:100%">
+                    <canvas style="touch-action: none;" width="990" height="502"></canvas>
+                </div>
+                <div id="diagram-graphs2-waypoints" class="intro-diagram" style="position:absolute;width:100%;top:0">
+                    <canvas style="touch-action: none;" width="990" height="502"></canvas>
+                </div>
+                <div id="diagram-graphs2-grid" style="position:absolute;width:100%;top:0">
+                    <canvas style="touch-action: none;" width="990" height="501"></canvas>
+                </div>
+            </figure>
+            <p>The pathfinding graph doesn’t have to be the same as what your game map uses. A grid game map can use a non-grid pathfinding graph, or vice versa. A* runs fastest with the fewest graph nodes; grids are often easier to work with but result
+                in lots of nodes. This page covers the A* algorithm but not graph design; see <a href="http://theory.stanford.edu/~amitp/GameProgramming/MapRepresentations.html">my other page</a><sup class="print-endnote">[1]</sup> for more about graphs.
+                For the explanations on the rest of the page, <em>I’m going to use grids because it’s easier to visualize the concepts</em>.</p>
+        </section>
+        <section>
+            <h2 id="algorithms"><span><a href="#algorithms">Algorithms</a></span><a class="anchor" href="#algorithms">#</a></h2>
+            <p>There are lots of algorithms that run on graphs. I’m going to cover these:</p>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td style="width:6rem">
+                            <svg id="overview-bfs" viewBox="-55,-55 110,110">
+                                <g fill="none" stroke="hsl(220,50%,50%)" stroke-width="2">
+                                    <circle r="10"></circle>
+                                    <circle r="20"></circle>
+                                    <circle r="30"></circle>
+                                    <circle r="40"></circle>
+                                    <circle r="50"></circle>
+                                </g>
+                            </svg>
+                        </td>
+                        <td><strong>Breadth First Search</strong> explores equally in all directions. This is an incredibly useful algorithm, not only for regular path finding, but also for procedural map generation, flow field pathfinding, distance maps,
+                            and other types of map analysis.</td>
+                    </tr>
+                    <tr>
+                        <td style="width:6rem">
+                            <svg id="overview-dijkstra" viewBox="-55,-55 110,110">
+                                <g fill="none" stroke="hsl(220,50%,50%)" stroke-width="2">
+                                    <path d="M 4,0 L5,0 L6,1 L7,2 L7,3 L7,3 L7,4 L7,5 L6,5 L5,5 L5,6 L5,6 L4,7 L4,8 L3,9 L2,9 L2,10 L1,10 L0,9 L-1,8 L-1,7 L-1,5 L-1,4 L-1,3 L-1,2 L-1,2 L-2,2 L-2,2 L-4,3 L-5,4 L-7,4 L-9,4 L-10,4 L-11,3 L-11,2 L-11,1 L-10,0 L-9,-1 L-8,-1 L-7,-2 L-6,-2 L-6,-3 L-5,-3 L-5,-3 L-5,-4 L-4,-4 L-4,-5 L-3,-5 L-3,-5 L-2,-5 L-2,-4 L-1,-4 L-1,-4 L0,-4 L0,-5 L1,-6 L1,-7 L2,-8 L3,-9 L5,-10 L6,-10 L7,-10 L7,-9 L7,-7 L7,-6 L6,-4 L5,-3 L4,-2 L3,-1 L3,-1 L3,0 L3,0 Z"></path>
+                                    <path d="M 8,0 L10,1 L12,2 L13,4 L14,5 L14,7 L14,8 L13,9 L12,10 L11,11 L10,12 L9,13 L8,14 L7,16 L6,17 L5,19 L3,19 L2,19 L0,18 L-1,16 L-2,13 L-3,10 L-3,8 L-2,5 L-2,4 L-2,3 L-3,4 L-5,5 L-7,6 L-10,7 L-14,8 L-17,8 L-20,7 L-21,6 L-22,4 L-21,2 L-20,0 L-18,-2 L-16,-3 L-14,-4 L-12,-4 L-11,-5 L-10,-6 L-10,-7 L-9,-8 L-9,-9 L-8,-10 L-7,-10 L-6,-10 L-4,-10 L-3,-9 L-2,-8 L-1,-8 L-1,-9 L0,-10 L1,-12 L3,-14 L4,-17 L7,-19 L9,-20 L12,-20 L14,-19 L15,-18 L15,-15 L14,-12 L12,-9 L10,-6 L8,-4 L7,-2 L6,-2 L6,-1 L6,-1 Z"></path>
+                                    <path d="M 12,0 L15,1 L18,3 L20,5 L21,8 L21,10 L21,12 L20,14 L18,15 L16,16 L15,18 L14,19 L12,21 L11,24 L9,26 L7,28 L5,29 L3,29 L0,27 L-2,24 L-4,20 L-4,16 L-4,11 L-4,8 L-3,6 L-4,5 L-5,6 L-7,7 L-11,9 L-16,11 L-21,12 L-26,12 L-30,11 L-32,9 L-33,6 L-32,3 L-30,0 L-27,-2 L-24,-4 L-21,-6 L-18,-7 L-17,-8 L-16,-9 L-15,-10 L-14,-12 L-13,-13 L-12,-14 L-10,-15 L-9,-15 L-7,-14 L-5,-13 L-3,-13 L-2,-12 L-1,-13 L0,-15 L2,-18 L4,-21 L7,-25 L10,-28 L14,-30 L18,-30 L20,-29 L22,-26 L22,-22 L21,-18 L19,-13 L16,-9 L12,-6 L10,-4 L9,-2 L8,-1 L10,-1 Z"></path>
+                                    <path d="M 16,0 L20,2 L23,4 L26,7 L28,10 L29,13 L28,16 L26,18 L24,20 L22,22 L20,24 L18,26 L17,29 L15,32 L13,35 L10,37 L7,39 L3,38 L0,36 L-3,32 L-5,27 L-6,21 L-6,15 L-5,11 L-5,8 L-5,7 L-6,8 L-10,10 L-15,12 L-21,15 L-28,16 L-34,16 L-39,14 L-43,11 L-44,8 L-43,4 L-40,0 L-36,-3 L-32,-6 L-28,-7 L-25,-9 L-22,-10 L-21,-12 L-20,-14 L-19,-16 L-18,-18 L-16,-19 L-14,-20 L-11,-20 L-9,-19 L-6,-18 L-5,-17 L-3,-17 L-2,-18 L0,-20 L2,-24 L5,-28 L9,-33 L14,-37 L19,-40 L23,-41 L27,-39 L30,-35 L30,-30 L28,-24 L25,-17 L21,-12 L17,-8 L13,-5 L11,-3 L11,-2 L13,-1 Z"></path>
+                                    <path d="M 20,0 L25,2 L29,5 L33,9 L35,13 L36,17 L35,20 L33,23 L30,25 L27,27 L25,30 L23,32 L21,36 L18,40 L16,43 L12,47 L8,48 L4,48 L0,45 L-4,40 L-6,33 L-7,26 L-7,19 L-6,13 L-6,10 L-6,9 L-8,10 L-12,12 L-18,15 L-26,18 L-35,20 L-43,20 L-49,18 L-53,14 L-55,10 L-54,5 L-50,0 L-45,-4 L-40,-7 L-35,-9 L-31,-11 L-28,-13 L-26,-15 L-25,-17 L-24,-20 L-22,-22 L-20,-24 L-17,-25 L-14,-25 L-11,-24 L-8,-22 L-6,-21 L-4,-21 L-2,-22 L0,-25 L3,-30 L6,-36 L11,-42 L17,-47 L23,-50 L29,-51 L34,-49 L37,-44 L37,-37 L35,-30 L31,-22 L26,-15 L21,-10 L17,-6 L14,-4 L14,-2 L16,-1 Z"></path>
+                                </g>
+                            </svg>
+                        </td>
+                        <td><strong>Dijkstra’s Algorithm</strong> (also called Uniform Cost Search) lets us prioritize which paths to explore. Instead of exploring all possible paths equally, it favors lower cost paths. We can assign lower costs to encourage
+                            moving on roads, higher costs to avoid forests, higher costs to discourage going near enemies, and more. When movement costs vary, we use this instead of Breadth First Search.</td>
+                    </tr>
+                    <tr>
+                        <td style="width:6rem">
+                            <svg id="overview-astar" viewBox="-55,-55 110,110">
+                                <g fill="none" stroke="hsl(220,50%,50%)" stroke-width="2">
+                                    <path d="M 3,0 L3,0 L4,1 L4,1 L4,1 L4,2 L4,2 L4,3 L5,4 L5,5 L5,6 L6,8 L6,10 L4,9 L3,8 L2,7 L1,6 L0,5 L0,5 L0,4 L-1,4 L-1,4 L-1,3 L-1,3 L-2,3 L-2,3 L-2,2 L-2,2 L-2,2 L-3,2 L-3,2 L-3,1 L-3,1 L-3,1 L-3,1 L-3,0 L-3,0 L-3,0 L-3,-1 L-3,-1 L-3,-1 L-3,-1 L-3,-2 L-2,-2 L-2,-2 L-2,-2 L-2,-2 L-2,-2 L-2,-3 L-1,-3 L-1,-3 L-1,-3 L-1,-3 L0,-3 L0,-3 L0,-3 L1,-3 L1,-3 L1,-3 L1,-3 L2,-3 L2,-2 L2,-2 L2,-2 L2,-2 L2,-2 L3,-2 L3,-1 L3,-1 L3,-1 L3,-1 L3,0 Z"></path>
+                                    <path d="M 7,0 L7,1 L7,1 L7,2 L8,3 L8,4 L8,5 L9,6 L9,8 L10,10 L11,13 L11,16 L12,21 L8,18 L6,16 L4,14 L2,12 L1,11 L0,10 L-1,9 L-1,8 L-2,7 L-3,7 L-3,6 L-3,6 L-4,5 L-4,5 L-4,4 L-5,4 L-5,4 L-5,3 L-6,3 L-6,2 L-6,2 L-6,1 L-6,1 L-6,0 L-6,-1 L-6,-1 L-6,-2 L-6,-2 L-5,-3 L-5,-3 L-5,-3 L-5,-4 L-4,-4 L-4,-5 L-3,-5 L-3,-5 L-3,-5 L-2,-6 L-2,-6 L-1,-6 L-1,-6 L0,-6 L1,-6 L1,-6 L2,-6 L2,-6 L3,-5 L3,-5 L3,-5 L4,-5 L4,-4 L5,-4 L5,-3 L5,-3 L5,-3 L6,-2 L6,-2 L6,-1 L6,-1 Z"></path>
+                                    <path d="M 10,0 L10,1 L11,2 L11,3 L12,4 L12,6 L13,7 L13,9 L14,12 L15,15 L16,19 L17,24 L18,31 L13,27 L9,23 L6,21 L3,18 L1,16 L0,15 L-1,13 L-2,12 L-3,11 L-4,10 L-4,10 L-5,9 L-6,8 L-6,7 L-7,7 L-7,6 L-8,5 L-8,5 L-8,4 L-9,3 L-9,2 L-9,2 L-9,1 L-9,0 L-9,-1 L-9,-2 L-9,-2 L-8,-3 L-8,-4 L-8,-5 L-7,-5 L-7,-6 L-6,-6 L-6,-7 L-5,-7 L-5,-8 L-4,-8 L-3,-8 L-2,-9 L-2,-9 L-1,-9 L0,-9 L1,-9 L2,-9 L2,-9 L3,-8 L4,-8 L5,-8 L5,-7 L6,-7 L6,-6 L7,-6 L7,-5 L8,-5 L8,-4 L8,-3 L9,-2 L9,-2 L9,-1 Z"></path>
+                                    <path d="M 14,0 L14,1 L14,3 L15,4 L15,6 L16,8 L17,10 L18,12 L19,16 L20,20 L21,26 L23,33 L24,42 L17,36 L11,31 L7,27 L4,24 L2,22 L0,19 L-2,18 L-3,16 L-4,15 L-5,14 L-6,13 L-7,12 L-8,11 L-8,10 L-9,9 L-10,8 L-10,7 L-11,6 L-11,5 L-11,4 L-12,3 L-12,2 L-12,1 L-12,0 L-12,-1 L-12,-2 L-12,-3 L-11,-4 L-11,-5 L-10,-6 L-10,-7 L-9,-8 L-8,-8 L-8,-9 L-7,-10 L-6,-10 L-5,-11 L-4,-11 L-3,-12 L-2,-12 L-1,-12 L0,-12 L1,-12 L2,-12 L3,-12 L4,-11 L5,-11 L6,-10 L7,-10 L8,-9 L8,-8 L9,-8 L10,-7 L10,-6 L11,-5 L11,-4 L12,-3 L12,-2 L12,-1 Z"></path>
+                                    <path d="M 17,0 L17,2 L18,3 L19,5 L19,7 L20,9 L21,12 L22,16 L24,20 L25,25 L27,32 L28,41 L30,52 L21,45 L14,39 L9,34 L5,30 L2,27 L0,24 L-2,22 L-4,20 L-5,19 L-6,17 L-7,16 L-8,15 L-9,14 L-10,12 L-11,11 L-12,10 L-13,9 L-13,8 L-14,6 L-14,5 L-15,4 L-15,3 L-15,1 L-15,0 L-15,-1 L-15,-3 L-15,-4 L-14,-5 L-14,-6 L-13,-8 L-12,-9 L-11,-10 L-11,-11 L-10,-11 L-9,-12 L-8,-13 L-6,-14 L-5,-14 L-4,-14 L-3,-15 L-1,-15 L0,-15 L1,-15 L3,-15 L4,-14 L5,-14 L6,-14 L8,-13 L9,-12 L10,-11 L11,-11 L11,-10 L12,-9 L13,-8 L14,-6 L14,-5 L14,-4 L15,-3 L15,-1 Z"></path>
+                                </g>
+                            </svg>
+                        </td>
+                        <td><strong>A*</strong> is a modification of Dijkstra’s Algorithm that is optimized for a single destination. Dijkstra’s Algorithm can find paths to all locations; A* finds paths to one location, or the closest of several locations.
+                            It prioritizes paths that seem to be leading closer to a goal.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>I’ll start with the simplest, Breadth First Search, and add one feature at a time to turn it into A*.</p>
+        </section>
+        <section>
+            <h2 id="breadth-first-search"><span><a href="#breadth-first-search">Breadth First Search</a></span><a class="anchor" href="#breadth-first-search">#</a></h2>
+            <p>The key idea for all of these algorithms is that we keep track of an expanding ring called the <em class="frontier">frontier</em>. On a grid, this process is sometimes called “flood fill”, but the same technique also works for non-grids. <strong>Start the animation</strong>                to see how the frontier expands <span class="square unexplored-bg">&nbsp;</span>→<span class="square frontier-bg">&nbsp;</span>→<span class="square reached-bg">&nbsp;</span></p>
+            <figure id="diagram-frontier">
+                <canvas style="touch-action: none;" width="990" height="501"></canvas>
+                <div class="slider" style="text-align: center;">
+                    <input type="range" min="0" max="60" value="3">
+                    <br>
+                    <button class="step_back">←</button>
+                    <button class="play_pause">Start animation</button>
+                    <button class="step_forward">→</button>
+                </div>
+            </figure>
+            <p>How do we implement this? Repeat these steps until the <span class="frontier">frontier</span> is empty:</p>
+            <ol>
+                <li>Pick and remove <span class="current">a location</span> from the <span class="frontier">frontier</span>.&nbsp; <span class="square frontier-bg">&nbsp;</span>→<span class="square current-bg">&nbsp;</span></li>
+                <li><em>Expand</em> it by looking at its <span class="neighbors">neighbors</span>&nbsp; <span class="square neighbors-bg">&nbsp;</span>&nbsp; <span class="square neighbors-bg">&nbsp;</span>&nbsp; <span class="square neighbors-bg">&nbsp;</span>&nbsp;.
+                    Skip walls. Any unreached neighbors we add to <em>both</em> the <span class="frontier">frontier</span> and the <span class="reached">reached</span> set &nbsp;<span class="square neighbors-bg">&nbsp;</span>→<span class="square frontier-bg">&nbsp;</span>                    &nbsp;.</li>
+            </ol>
+            <p>Let’s see this up close. The tile are numbered in the order we visit them. <strong>Step through to see the expansion process:</strong></p>
+            <figure id="diagram-expansion">
+                <canvas style="touch-action: none; cursor: crosshair;" width="990" height="446"></canvas>
+                <div class="slider" style="text-align: center;">
+                    <input type="range" min="0" max="33" value="21">
+                    <br>
+                    <button class="step_back">&lt; Step backward</button>
+                    <button class="play_pause">Start animation</button>
+                    <button class="step_forward">Step forward &gt;</button>
+                </div>
+            </figure>
+            <p>It’s only ten lines of (Python) code:</p><pre class="src"><span class="frontier">frontier</span> = Queue()
+<span class="frontier">frontier</span>.put(<span class="start">start</span> <svg class="icon" alt="(blob icon)" viewBox="-1050 -1200 2100 2100" xml:base="../_icon-blob.svg"><use xlink:href="#blob-icon"></use></svg>)
+<span class="reached">reached</span> = set()
+<span class="reached">reached</span>.add(<span class="start">start</span>)
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <span class="if">if</span> <span class="next">next</span> not in <span class="reached">reached</span>:
+         <span class="frontier">frontier</span>.put(<span class="next">next</span>)
+         <span class="reached">reached</span>.add(<span class="next">next</span>)</pre>
+            <p>This loop is the essence of the graph search algorithms on this page, including A*. But how do we find the shortest path? The loop doesn’t actually construct the paths; it only tells us how to visit everything on the map. That’s because Breadth
+                First Search can be used for a lot more than just finding paths; in <a href="https://www.redblobgames.com/pathfinding/tower-defense/">this article</a> I show how it’s used for tower defense, but it can also be used for distance maps, procedural
+                map generation, and lots of other things. Here though we want to use it for finding paths, so let’s modify the loop to keep track of <em>where we came from</em> for every location that’s been reached, and rename the <code class="reached">reached</code>                set to a <code class="came_from">came_from</code> table (the keys of the table are the reached set):</p><pre class="src"><span class="frontier">frontier</span> = Queue()
+<span class="frontier">frontier</span>.put(<span class="start">start</span> <svg class="icon" alt="(blob icon)" viewBox="-1050 -1200 2100 2100" xml:base="../_icon-blob.svg"><use xlink:href="#blob-icon"></use></svg>)
+<em><span class="came_from">came_from</span></em> = dict() # <span class="path">path</span> A-&gt;B is stored as <span class="came_from">came_from</span>[B] == A
+<em><span class="came_from">came_from</span></em>[<span class="start">start</span>] = <em>None</em>
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <span class="if">if</span> <span class="next">next</span> not in <em><span class="came_from">came_from</span></em>:
+         <span class="frontier">frontier</span>.put(<span class="next">next</span>)
+         <em><span class="came_from">came_from</span></em>[<span class="next">next</span>] = <em><span class="current">current</span></em></pre>
+            <p>Now <code class="came_from">came_from</code> for each location points to the place where we came from. These are like “breadcrumbs”. They’re enough to reconstruct the entire path. Move the cross
+                <svg class="icon" alt="(X icon)" viewBox="-10 -10 20 20"
+                xml:base="../_icon-cross.svg">
+                    <path d="M -9,-9 L 9,9 M -9,9 L 9,-9" stroke="hsl(310, 50%, 50%)" stroke-width="6.75"></path>
+                </svg> to see how following the arrows gives you a reverse path back to the start position.</p>
+            <figure id="diagram-path-reconstruction">
+                <canvas style="touch-action: none;" width="990" height="501"></canvas>
+            </figure>
+            <p>The code to reconstruct paths is simple: <em>follow the arrows backwards <b>from</b> the goal <b>to</b> the start</em>. A path is a <em>sequence of edges</em>, but often it’s easier to store the nodes:</p><pre class="src"><span class="current">current</span> = <span class="goal">goal</span> <svg class="icon" alt="(X icon)" viewBox="-10 -10 20 20" xml:base="../_icon-cross.svg"><path d="M -9,-9 L 9,9 M -9,9 L 9,-9" stroke="hsl(310, 50%, 50%)" stroke-width="6.75"><!--<span class='path'-->path&gt;</path></svg>
+<span class="path">path</span> = []
+<span class="while">while</span> <span class="current">current</span> != <span class="start">start</span>: <svg class="icon" alt="(blob icon)" viewBox="-1050 -1200 2100 2100" xml:base="../_icon-blob.svg"><use xlink:href="#blob-icon"></use></svg>
+   <span class="path">path</span>.append(<span class="current">current</span>)
+   <span class="current">current</span> = <span class="came_from">came_from</span>[<span class="current">current</span>]
+<span class="path">path</span>.append(<span class="start">start</span>) # optional
+<span class="path">path</span>.reverse() # optional</pre>
+            <p>That’s the simplest pathfinding algorithm. It works not only on grids as shown here but on any sort of graph structure. In a dungeon, graph locations could be rooms and graph edges the doorways between them. In a platformer, graph locations
+                could be locations and graph edges the possible actions such as move left, move right, jump up, jump down. In general, think of the graph as states and actions that change state. I have more written about map representation <a href="http://theory.stanford.edu/~amitp/GameProgramming/MapRepresentations.html">here</a>
+                <sup
+                class="print-endnote">[2]</sup>. In the rest of the article I’ll continue using examples with grids, and explore why you might use variants of breadth first search.</p>
+        </section>
+        <section>
+            <h2 id="early-exit"><span><a href="#early-exit">Early exit</a></span><a class="anchor" href="#early-exit">#</a></h2>
+            <p>We’ve found paths from <em>one</em> location to <em>all</em> other locations. Often we don’t need all the paths; we only need a path from one location to <em>one</em> other location. We can stop expanding the frontier as soon as we’ve found
+                our goal. Drag the
+                <svg class="icon" alt="(X icon)" viewBox="-10 -10 20 20" xml:base="../_icon-cross.svg">
+                    <path d="M -9,-9 L 9,9 M -9,9 L 9,-9" stroke="hsl(310, 50%, 50%)" stroke-width="6.75"></path>
+                </svg> around see how the frontier stops expanding as soon as it reaches the goal.</p>
+            <div class="side-by-side">
+                <figure id="diagram-early-exit-false">
+                    <figcaption>Without early exit</figcaption>
+                    <canvas style="touch-action: none; cursor: crosshair;" width="495" height="495"></canvas>
+                </figure>
+                <figure id="diagram-early-exit-true">
+                    <figcaption>With early exit</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+            </div>
+            <p>The code is straightforward:</p><pre class="src"><span class="frontier">frontier</span> = Queue()
+<span class="frontier">frontier</span>.put(<span class="start">start</span> <svg class="icon" alt="(blob icon)" viewBox="-1050 -1200 2100 2100" xml:base="../_icon-blob.svg"><use xlink:href="#blob-icon"></use></svg>)
+<span class="came_from">came_from</span> = dict()
+<span class="came_from">came_from</span>[<span class="start">start</span>] = None
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+
+   <em><span class="if">if</span> <span class="current">current</span> == <span class="goal">goal</span>:</em> <svg class="icon" alt="(X icon)" viewBox="-10 -10 20 20" xml:base="../_icon-cross.svg"><path d="M -9,-9 L 9,9 M -9,9 L 9,-9" stroke="hsl(310, 50%, 50%)" stroke-width="6.75"><!--<span class='path'-->path&gt;</path></svg>
+   <em>   <span class="break">break</span>           </em>
+
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <span class="if">if</span> <span class="next">next</span> not in <span class="came_from">came_from</span>:
+         <span class="frontier">frontier</span>.put(<span class="next">next</span>)
+         <span class="came_from">came_from</span>[<span class="next">next</span>] = <span class="current">current</span></pre>
+            <p>There are lots of cool things you can do with <a href="https://www.redblobgames.com/pathfinding/early-exit/">early exit conditions</a>.</p>
+        </section>
+        <section>
+            <h2 id="dijkstra"><span><a href="#dijkstra">Movement costs</a></span><a class="anchor" href="#dijkstra">#</a></h2>
+            <p>So far we’ve made step have the same “cost”. In some pathfinding scenarios there are different costs for different types of movement. For example in Civilization, moving through plains or desert might cost 1 move-point but moving through forest
+                or hills might cost 5 move-points. In the map at the top of the page, walking through water cost 10 times as much as walking through grass. Another example is diagonal movement on a grid that costs more than axial movement. We’d like the
+                pathfinder to take these costs into account. Let’s compare the <em>number of steps</em> from the start with the <em>distance</em> from the start:</p>
+            <div class="side-by-side">
+                <figure id="diagram-weights-false">
+                    <figcaption>Number of steps</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+                <figure id="diagram-weights-true">
+                    <figcaption>Distance</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+            </div>
+            <p>For this we want <strong>Dijkstra’s Algorithm</strong> (or Uniform Cost Search). How does it differ from Breadth First Search? We need to track movement costs, so let’s add a new variable, <code class="cost_so_far">cost_so_far</code>, to keep
+                track of the total movement cost from the start location. We want to take the movement costs into account when deciding how to evaluate locations; let’s turn our queue into a priority queue. Less obviously, we may end up visiting a location
+                multiple times, with different costs, so we need to alter the logic a little bit. Instead of adding a location to the frontier if the location has never been reached, we’ll add it if the new path to the location is better than the best
+                previous path.</p><pre class="src"><span class="frontier">frontier</span> = <em>PriorityQueue()</em>
+<span class="frontier">frontier</span>.put(<span class="start">start</span><em>, 0</em>)
+<span class="came_from">came_from</span> = dict()
+<span class="cost_so_far">cost_so_far</span> = dict()
+<span class="came_from">came_from</span>[<span class="start">start</span>] = None
+<span class="cost_so_far">cost_so_far</span>[<span class="start">start</span>] = 0
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+
+   <span class="if">if</span> <span class="current">current</span> == <span class="goal">goal</span>:
+      <span class="break">break</span>
+
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <em><span class="new_cost">new_cost</span> = <span class="cost_so_far">cost_so_far</span>[<span class="current">current</span>] + graph.cost(<span class="current">current</span>, <span class="next">next</span>)</em>
+      <em><span class="if">if</span> <span class="next">next</span> not in <span class="cost_so_far">cost_so_far</span> or <span class="new_cost">new_cost</span> &lt; <span class="cost_so_far">cost_so_far</span>[<span class="next">next</span>]:</em>
+         <span class="cost_so_far">cost_so_far</span>[<span class="next">next</span>] = <em><span class="new_cost">new_cost</span></em>
+         <em>priority = <span class="new_cost">new_cost</span></em>
+         <span class="frontier">frontier</span>.put(<span class="next">next</span><em>, priority</em>)
+         <span class="came_from">came_from</span>[<span class="next">next</span>] = <span class="current">current</span></pre>
+            <p>Using a priority queue instead of a regular queue <em>changes the way the frontier expands</em>. Contour lines are one way to see this. <strong>Start the animation</strong> to see how the frontier expands more slowly through the forests, finding
+                the shortest path around the central forest instead of through it:
+            </p>
+            <div id="diagram-contour">
+                <div class="side-by-side">
+                    <figure id="diagram-contour-unweighted">
+                        <figcaption>Breadth First Search</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                    <figure id="diagram-contour-weighted">
+                        <figcaption>Dijkstra’s Algorithm</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                </div>
+                <div class="slider" style="text-align: center;">
+                    <input type="range" min="0" max="225" value="67">
+                    <br>
+                    <button class="step_back">←</button>
+                    <button class="play_pause">Start animation</button>
+                    <button class="step_forward">→</button>
+                </div>
+            </div>
+            <p>Movement costs other than 1 allow us to explore more interesting graphs, not only grids. In the map at the top of the page, movement costs were based on the distance from room to room. Movement costs can also be used to avoid or prefer areas
+                based on proximity to enemies or allies.</p>
+            <p>Implementation notes: We want this priority queue to return the <em>lowest</em> value first. On the implementation page I show <code>PriorityQueue</code>&nbsp; <a href="https://www.redblobgames.com/pathfinding/a-star/implementation.html#python-dijkstra">in Python</a>                using <code>heapq</code> to return the lowest value first and also <a href="https://www.redblobgames.com/pathfinding/a-star/implementation.html#cpp-dijkstra">in C++</a> using <code>std::priority_queue</code> configured to return the lowest
+                value first. Also, the version of Dijkstra’s Algorithm and A* I present on this page differs from what’s in algorithms textbooks. It’s much closer to what’s called Uniform Cost Search. I describe the differences <a href="https://www.redblobgames.com/pathfinding/a-star/implementation.html#algorithm">on the implementation page</a>.</p>
+        </section>
+        <section>
+            <h2 id="greedy-best-first"><span><a href="#greedy-best-first">Heuristic search</a></span><a class="anchor" href="#greedy-best-first">#</a></h2>
+            <p>With Breadth First Search and Dijkstra’s Algorithm, the frontier expands in all directions. This is a reasonable choice if you’re trying to find a path to all locations or to many locations. However, a common case is to find a path to only
+                one location. Let’s make the frontier expand towards the goal more than it expands in other directions. First, we’ll define a <em>heuristic</em> function that tells us how close we are to the goal:</p><pre class="src"><span class="def">def</span> heuristic(a, b):
+   # Manhattan distance on a square grid
+   <span class="return">return</span> abs(a.x - b.x) + abs(a.y - b.y)</pre>
+            <p>In Dijkstra’s Algorithm we used the actual distance from the <em>start</em> for the priority queue ordering. Here instead, in <strong>Greedy Best First Search</strong>, we’ll use the estimated distance to the <em>goal</em> for the priority
+                queue ordering. The location closest to the goal will be explored first. The code uses the priority queue from Dijkstra’s Algorithm but without <code class="cost_so_far">cost_so_far</code>:</p><pre class="src"><span class="frontier">frontier</span> = PriorityQueue()
+<span class="frontier">frontier</span>.put(<span class="start">start</span>, 0)
+<span class="came_from">came_from</span> = dict()
+<span class="came_from">came_from</span>[<span class="start">start</span>] = None
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+
+   <span class="if">if</span> <span class="current">current</span> == <span class="goal">goal</span>:
+      <span class="break">break</span>
+
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <span class="if">if</span> <span class="next">next</span> not in <span class="came_from">came_from</span>:
+         <em>priority = heuristic(<span class="goal">goal</span>, <span class="next">next</span>)</em>
+         <span class="frontier">frontier</span>.put(<span class="next">next</span>, priority)
+         <span class="came_from">came_from</span>[<span class="next">next</span>] = <span class="current">current</span></pre>
+            <p>Let’s see how well it works:</p>
+            <div id="diagram-greedybestfirst" class="color-frontier">
+                <div class="side-by-side">
+                    <figure class="left">
+                        <figcaption>Dijkstra’s Algorithm</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                    <figure class="right">
+                        <figcaption>Greedy Best-First Search</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                </div>
+                <div class="slider" style="text-align: center;">
+                    <input type="range" min="0" max="225" value="10">
+                    <br>
+                    <button class="step_back">←</button>
+                    <button class="play_pause">Start animation</button>
+                    <button class="step_forward">→</button>
+                </div>
+            </div>
+            <p>Wow!! Amazing, right? But what happens in a more complex map?</p>
+            <div id="diagram-greedybestfirst-complex" class="color-frontier">
+                <div class="side-by-side">
+                    <figure class="left">
+                        <figcaption>Dijkstra’s Algorithm</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                    <figure class="right">
+                        <figcaption>Greedy Best-First Search</figcaption>
+                        <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                    </figure>
+                </div>
+                <div class="slider" style="text-align: center;">
+                    <input type="range" min="0" max="194" value="10">
+                    <br>
+                    <button class="step_back">←</button>
+                    <button class="play_pause">Start animation</button>
+                    <button class="step_forward">→</button>
+                </div>
+            </div>
+            <p>Those paths aren’t the shortest. So this algorithm runs <em>faster</em> when there aren’t a lot of obstacles, but the paths aren’t as <em>good</em>. Can we fix this? Yes!</p>
+        </section>
+        <section>
+            <h2 id="astar"><span><a href="#astar">The A* algorithm</a></span><a class="anchor" href="#astar">#</a></h2>
+            <p>Dijkstra’s Algorithm works well to find the shortest path, but it wastes time exploring in directions that aren’t promising. Greedy Best First Search explores in promising directions but it may not find the shortest path. The A* algorithm
+                uses <em>both</em> the actual distance from the start and the estimated distance to the goal.</p>
+            <p>The code is very similar to Dijkstra’s Algorithm:</p><pre class="src"><span class="frontier">frontier</span> = PriorityQueue()
+<span class="frontier">frontier</span>.put(<span class="start">start</span>, 0)
+<span class="came_from">came_from</span> = dict()
+<span class="cost_so_far">cost_so_far</span> = dict()
+<span class="came_from">came_from</span>[<span class="start">start</span>] = None
+<span class="cost_so_far">cost_so_far</span>[<span class="start">start</span>] = 0
+
+<span class="while">while</span> not <span class="frontier">frontier</span>.empty():
+   <span class="current">current</span> = <span class="frontier">frontier</span>.get()
+
+   <span class="if">if</span> <span class="current">current</span> == <span class="goal">goal</span>:
+      <span class="break">break</span>
+
+   <span class="for">for</span> <span class="next">next</span> in graph.neighbors(<span class="current">current</span>):
+      <span class="new_cost">new_cost</span> = <span class="cost_so_far">cost_so_far</span>[<span class="current">current</span>] + graph.cost(<span class="current">current</span>, <span class="next">next</span>)
+      <span class="if">if</span> <span class="next">next</span> not in <span class="cost_so_far">cost_so_far</span> or <span class="new_cost">new_cost</span> &lt; <span class="cost_so_far">cost_so_far</span>[<span class="next">next</span>]:
+         <span class="cost_so_far">cost_so_far</span>[<span class="next">next</span>] = <span class="new_cost">new_cost</span>
+         priority = <span class="new_cost">new_cost</span><em> + heuristic(<span class="goal">goal</span>, <span class="next">next</span>)</em>
+         <span class="frontier">frontier</span>.put(<span class="next">next</span>, priority)
+         <span class="came_from">came_from</span>[<span class="next">next</span>] = <span class="current">current</span></pre>
+            <p><strong>Compare</strong> the algorithms: Dijkstra’s Algorithm calculates the distance from the start point. Greedy Best-First Search estimates the distance to the goal point. A* is using the sum of those two distances.</p>
+            <div id="diagram-astar"
+            class="side-by-side width-150percent">
+                <figure id="diagram-astar-1">
+                    <figcaption>Dijkstra’s Algorithm</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+                <figure id="diagram-astar-2">
+                    <figcaption>Greedy Best-First</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+                <figure id="diagram-astar-3">
+                    <figcaption>A* Search</figcaption>
+                    <canvas style="touch-action: none;" width="495" height="495"></canvas>
+                </figure>
+            </div>
+            <p><strong>Try</strong> opening a hole in the wall in various places. You’ll find that when Greedy Best-First Search finds the right answer, A* finds it too, exploring the same area. When Greedy Best-First Search finds the wrong answer (longer
+                path), A* finds the right answer, like Dijkstra’s Algorithm does, but still explores less than Dijkstra’s Algorithm does.</p>
+            <p>A* is the best of both worlds. As long as the heuristic does not overestimate distances, A* finds an optimal path, like Dijkstra’s Algorithm does. A* uses the heuristic to reorder the nodes so that it’s <em>more likely</em> that the goal node
+                will be encountered sooner.</p>
+            <p>And … that’s it! That’s the A* algorithm.</p>
+        </section>
+        <section>
+            <h2 id="more"><span><a href="#more">More</a></span><a class="anchor" href="#more">#</a></h2>
+            <p class="note"><strong>Are you ready to implement this?</strong> Consider using an existing library. If you’re implementing it yourself, I have <a href="https://www.redblobgames.com/pathfinding/a-star/implementation.html">companion guide</a> that shows step
+                by step how to implement graphs, queues, and pathfinding algorithms in Python, C++, and C#.</p>
+            <p>Which algorithm should you use for finding paths on a game map?</p>
+            <ul>
+                <li>If you want to find paths from or to <em>all</em> all locations, use Breadth First Search or Dijkstra’s Algorithm. Use Breadth First Search if movement costs are all the same; use Dijkstra’s Algorithm if movement costs vary.</li>
+                <li>If you want to find paths to <em>one</em> location, or the closest of several goals, use Greedy Best First Search or A*. Prefer A* in most cases. When you’re tempted to use Greedy Best First Search, consider using A* with an <a href="https://en.wikipedia.org/wiki/Admissible_heuristic">“inadmissible” heuristic</a>
+                    <sup
+                    class="print-endnote">[3]</sup>.</li>
+            </ul>
+            <p>What about optimal paths? Breadth First Search and Dijkstra’s Algorithm are guaranteed to find the shortest path given the input graph. Greedy Best First Search is not. A* is guaranteed to find the shortest path if the heuristic is never larger
+                than the true distance. As the heuristic becomes smaller, A* turns into Dijkstra’s Algorithm. As the heuristic becomes larger, A* turns into Greedy Best First Search.</p>
+            <p>What about performance? The best thing to do is to eliminate unnecessary locations in your graph. If using a grid, <a href="https://www.redblobgames.com/pathfinding/grids/algorithms.html">see this</a>. Reducing the size of the graph helps
+                all the graph search algorithms. After that, use the simplest algorithm you can; simpler queues run faster. Greedy Best First Search typically runs faster than Dijkstra’s Algorithm but doesn’t produce optimal paths. A* is a good choice
+                for most pathfinding needs.</p>
+            <p>What about non-maps? I show maps here because I think it’s easier to understand how the algorithms work by using a map. However, these graph search algorithms can be used on any sort of graph, not only game maps, and I’ve tried to present
+                the algorithm code in a way that’s independent of 2d grids. Movement costs on the maps become arbitrary weights on graph edges. The heuristics don’t translate as easily to arbitrary maps; you have to design a heuristic for each type of
+                graph. For planar maps, distances are a good choice, so that’s what I’ve used here.</p>
+            <p>I have lots more written about pathfinding <a href="http://theory.stanford.edu/~amitp/GameProgramming/">here</a><sup class="print-endnote">[4]</sup>. Keep in mind that graph search is only one part of what you will need. A* doesn’t itself
+                handle things like cooperative movement, moving obstacles, map changes, evaluation of dangerous areas, formations, turn radius, object sizes, animation, path smoothing, or lots of other topics.
+            </p>
+        </section>
+    </main>
+    <div class="below-divider">
+        <p>Email me <a class="email" rel="me" href="mailto:redblobgames@gmail.com">redblobgames@gmail.com</a>, or tweet <a rel="me" href="https://twitter.com/redblobgames">@redblobgames</a>, or comment:</p>
+        <div class="print-endnote">
+            <h3>Endnotes</h3>
+            <ol>
+                <li>[1]:&nbsp;http://theory.stanford.edu/~amitp/GameProgramming/MapRepresentations.html</li>
+                <li>[2]:&nbsp;http://theory.stanford.edu/~amitp/GameProgramming/MapRepresentations.html</li>
+                <li>[3]:&nbsp;https://en.wikipedia.org/wiki/Admissible_heuristic</li>
+                <li>[4]:&nbsp;http://theory.stanford.edu/~amitp/GameProgramming/</li>
+            </ol>
+        </div>
+        <div class="comments" role="complementary">
+            <div id="disqus_thread">
+                <iframe id="dsq-app9564" name="dsq-app9564" allowtransparency="true" scrolling="no" tabindex="0" title="Disqus" style="width: 1px !important; min-width: 100% !important; border: medium none !important; overflow: hidden !important; height: 8667px !important;"
+                src="Introduction%20to%20the%20A%20Algorithm_files/a_002.html" horizontalscrolling="no" verticalscrolling="no" width="100%" frameborder="0"></iframe>
+            </div>
+            <script>
+                function disqus_config(){this.page.url="http://www.redblobgames.com/pathfinding/a-star/introduction.html"}
+                function $disqus(){$disqus=()=>{};$l("//redblobgames.disqus.com/embed.js")}
+                if(document.location.hash.match(/#comment/))setTimeout($disqus,0)
+                else if('IntersectionObserver' in window){new IntersectionObserver(e=>{if(e[0].isIntersecting)$disqus()}).observe(document.getElementById('disqus_thread'))}
+            </script>
+            <noscript><a href="//redblobgames.disqus.com/?url=https://www.redblobgames.com/pathfinding/a-star/introduction.html">View the discussion thread.</a></noscript>
+        </div>
+    </div>
+    <footer>
+        <div><address>
+		  Copyright © 2022
+                  <a rel="author home copyright" href="https://www.redblobgames.com/">Red Blob Games</a><br><a href="https://simblob.blogspot.com/feeds/posts/default"><svg viewBox="0 0 30 30" height="1em" style="vertical-align:text-bottom"><rect width="30" height="30" rx="5" fill="orange"></rect><circle cx="7" cy="23" r="4" fill="white"></circle><path d="M 5,5 A 20,20,0,0,1,25,25 M 5,13 A 12,12,0,0,1,17,25" fill="none" stroke="white" stroke-width="4" stroke-linecap="square"></path></svg>RSS Feed</a></address>
+            <div>
+                &nbsp;
+                <svg width="0" height="0" xml:base="../_icon-def-blob.svg">
+                    <defs>
+                        <polygon id="blob-icon" points="1100 -55 1189 -174 1243 -306 1241 -439 1180 -554 1070 -639 931 -692 787 -718 660 -735 562 -763 490 -819 434 -909 378 -1028 305 -1156 209 -1268 91 -1339 -37 -1352 -162 -1304 -268 -1206 -350 -1081 -412 -956 -466 -852 -529 -782 -616 -744 -731 -725 -870 -705 -1014 -665 -1139 -593 -1223 -489 -1249 -362 -1217 -228 -1140 -102 -1040 5 -945 96 -877 176 -847 262 -851 365 -874 491 -893 636 -886 784 -838 915 -746 1008 -621 1049 -478 1039 -337 990 -211 925 -104 869 -11 845 80 860 183 909 304 974 442 1029 586 1051 718 1023 819 942 878 819 895 673 880 526 856 394 845 285 866 197 925 116 1015 29"
+                        fill="hsl(0, 50%, 50%)"></polygon>
+                    </defs>
+                </svg>
+                <!-- TODO: need to improve formatting of this --><pre style="text-align:left;font-size:50%" class="src">Citations:
+
+Patel, Amit, "Introduction to the A* Algorithm",
+    Red Blob Games, 2014,
+    https://www.redblobgames.com/pathfinding/a-star/introduction.html
+
+@article{article,
+    author  = {Patel, Amit},
+    title   = {Introduction to the A* Algorithm},
+    year    = {2014},
+    note    =
+     {https://www.redblobgames.com/pathfinding/a-star/introduction.html}
+}</pre> Created 26 May 2014 with the help of <a href="https://github.com/jasondavies/conrec.js">conrec.js</a>; map sprites from StarRaven’s <a href="https://www.deviantart.com/starraven/art/Sketchy-Cartography-Brushes-198264358">Sketchy Cartography Brushes</a>;
+                &nbsp;
+                <!-- hhmts start -->Last modified: 19 Oct 2022
+                <!-- hhmts end -->
+            </div>
+        </div>
+    </footer>
+    <script async="" src="Introduction%20to%20the%20A%20Algorithm_files/embed.js" data-timestamp="1666838156188"></script>
+    <iframe style="display: none;"></iframe>
+</body>
+
+</html>
